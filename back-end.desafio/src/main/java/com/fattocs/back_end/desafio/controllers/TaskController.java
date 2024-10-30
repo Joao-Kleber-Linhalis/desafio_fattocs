@@ -44,7 +44,7 @@ public class TaskController {
             tags = {"Task"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = TaskVO.class))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskVO.class))
                     ),
                     @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -62,7 +62,7 @@ public class TaskController {
             tags = {"Task"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = TaskVO.class))
+                            content = @Content(mediaType = "application/json",schema = @Schema(implementation = TaskVO.class))
                     ),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
@@ -78,7 +78,7 @@ public class TaskController {
             tags = {"Task"},
             responses = {
                     @ApiResponse(description = "Updated", responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = TaskVO.class))
+                            content = @Content(mediaType = "application/json",schema = @Schema(implementation = TaskVO.class))
                     ),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
