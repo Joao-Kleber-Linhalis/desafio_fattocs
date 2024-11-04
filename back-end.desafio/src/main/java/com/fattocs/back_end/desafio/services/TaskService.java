@@ -29,7 +29,7 @@ public class TaskService {
 
         logger.info("Finding all task");
         var tasks = DozerMapper.parseListObjects(repository.findAll(), TaskVO.class);
-        tasks.stream().map(p -> p.add(linkTo(methodOn(TaskController.class).findById(p.getKey())).withSelfRel()));
+        tasks.forEach(p -> p.add(linkTo(methodOn(TaskController.class).findById(p.getKey())).withSelfRel()));
         return tasks;
     }
 
@@ -50,8 +50,10 @@ public class TaskService {
         logger.info("Creating one task");
         var task = DozerMapper.parseObject(taskVO, Task.class);
         Long maxOrder = repository.findMaxPresentationOrder();
+        task.setId(null);
         task.setPresentationOrder(maxOrder + 1);
         var newTaskVO = DozerMapper.parseObject(repository.save(task), TaskVO.class);
+        newTaskVO.add(linkTo(methodOn(TaskController.class).findById(newTaskVO.getKey())).withSelfRel());
         return newTaskVO;
     }
 
