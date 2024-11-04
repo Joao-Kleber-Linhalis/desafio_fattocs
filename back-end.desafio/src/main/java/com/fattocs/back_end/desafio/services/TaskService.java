@@ -1,5 +1,9 @@
 package com.fattocs.back_end.desafio.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import com.fattocs.back_end.desafio.controllers.TaskController;
 import com.fattocs.back_end.desafio.data.vo.v1.TaskVO;
 import com.fattocs.back_end.desafio.domain.Task;
 import com.fattocs.back_end.desafio.exceptions.RequiredObjectIsNullException;
@@ -24,8 +28,7 @@ public class TaskService {
 
         logger.info("Finding all task");
         var tasks = DozerMapper.parseListObjects(repository.findAll(), TaskVO.class);
-
-        //Colocar hateoas
+        tasks.stream().map(p -> p.add(linkTo(methodOn(TaskController.class).findById(p.getKey())).withSelfRel()));
         return tasks;
     }
 
@@ -35,7 +38,7 @@ public class TaskService {
 
         var task = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + id));
         var taskVO = DozerMapper.parseObject(task, TaskVO.class);
-        //hateoas
+        taskVO.add(linkTo(methodOn(TaskController.class).findById(id)).withSelfRel());
         return taskVO;
     }
 
@@ -54,15 +57,15 @@ public class TaskService {
         if (newTaskVO == null) throw new RequiredObjectIsNullException();
 
         logger.info("Updating one task");
-        var task = repository.findById(newTaskVO.getId()).orElseThrow(() ->
-                new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + newTaskVO.getId()));
+        var task = repository.findById(newTaskVO.getKey()).orElseThrow(() ->
+                new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + newTaskVO.getKey()));
 
         task.setName(newTaskVO.getName());
         task.setCost(newTaskVO.getCost());
         task.setLimitDate(newTaskVO.getLimitDate());
         task.setPresentationOrder(newTaskVO.getPresentationOrder());
         var taskVO = DozerMapper.parseObject(repository.save(task),TaskVO.class);
-        //hateoas
+        taskVO.add(linkTo(methodOn(TaskController.class).findById(taskVO.getKey())).withSelfRel());
         return taskVO;
     }
 

@@ -16,8 +16,8 @@ public class TaskVO extends RepresentationModel<TaskVO> implements Serializable 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Mapping
-    private Long id;
+    @Mapping("id")
+    private Long key;
 
     private String name;
 
@@ -30,12 +30,12 @@ public class TaskVO extends RepresentationModel<TaskVO> implements Serializable 
     public TaskVO() {
     }
 
-    public Long getId() {
-        return id;
+    public Long getKey() {
+        return key;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setKey(Long key) {
+        this.key = key;
     }
 
     public String getName() {
@@ -78,7 +78,7 @@ public class TaskVO extends RepresentationModel<TaskVO> implements Serializable 
 
         TaskVO taskVO = (TaskVO) o;
 
-        if (!Objects.equals(id, taskVO.id)) return false;
+        if (!Objects.equals(key, taskVO.key)) return false;
         if (!Objects.equals(name, taskVO.name)) return false;
         if (!Objects.equals(cost, taskVO.cost)) return false;
         if (!Objects.equals(limitDate, taskVO.limitDate)) return false;
@@ -88,7 +88,7 @@ public class TaskVO extends RepresentationModel<TaskVO> implements Serializable 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (key != null ? key.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (cost != null ? cost.hashCode() : 0);
         result = 31 * result + (limitDate != null ? limitDate.hashCode() : 0);
