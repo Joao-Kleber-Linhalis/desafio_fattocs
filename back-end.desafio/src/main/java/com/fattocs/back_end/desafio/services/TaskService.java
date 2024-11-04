@@ -12,6 +12,7 @@ import com.fattocs.back_end.desafio.mapper.DozerMapper;
 import com.fattocs.back_end.desafio.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -48,6 +49,8 @@ public class TaskService {
 
         logger.info("Creating one task");
         var task = DozerMapper.parseObject(taskVO, Task.class);
+        Long maxOrder = repository.findMaxPresentationOrder();
+        task.setPresentationOrder(maxOrder + 1);
         var newTaskVO = DozerMapper.parseObject(repository.save(task), TaskVO.class);
         return newTaskVO;
     }
@@ -69,12 +72,22 @@ public class TaskService {
         return taskVO;
     }
 
-    public void delete(Long id){
-
+    @Transactional
+    public void delete(Long id) {
         logger.info("Deleting task with id = " + id);
 
-        var task = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + id));
+        // Verifica se a tarefa existe
+        var task = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + id));
+
+        // Salva a ordem de apresentação da tarefa a ser excluida
+        Long deletedOrder = task.getPresentationOrder();
+
+        // Exclui
         repository.delete(task);
+
+        // Atualiza a ordem de apresentação dos registros restantes
+        repository.updatePresentationOrderAfterDeletion(deletedOrder);
     }
 
 
