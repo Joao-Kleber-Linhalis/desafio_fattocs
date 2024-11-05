@@ -1,45 +1,68 @@
-import { Component, ViewChild } from '@angular/core';
-import {MatTable, MatTableModule} from '@angular/material/table';
-import {MatIconModule} from '@angular/material/icon';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Task } from 'src/app/models/task';
+import { ToastrService } from 'ngx-toastr';
+import { TaskService } from 'src/app/services/task.service';
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-  quantity: number;
-}
 
-export const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H', quantity: 100},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He', quantity: 100},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li', quantity: 100},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be', quantity: 100},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B', quantity: 100},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C', quantity: 100},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N', quantity: 100},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O', quantity: 100},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F', quantity: 100},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne', quantity: 100},
-];
 
 @Component({
   selector: 'app-task-list',
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.css']
 })
-export class TaskListComponent {
-  @ViewChild('table', { static: true })
-  table!: MatTable<PeriodicElement>;
+export class TaskListComponent implements OnInit {
 
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol', 'quantity'];
-  dataSource = ELEMENT_DATA;
+  constructor(
+    private service: TaskService,
+    private toast: ToastrService,
+  ) { }
+
+
+  ngOnInit(): void {
+    this.findAll();
+  }
+
+  findAll() {
+    this.service.findAll().subscribe({
+      next: (response) => {
+        this.ELEMENT_DATA = response
+        this.dataSource = this.ELEMENT_DATA;
+      },
+      error: (e) => {
+        this.toast.error("Erro no Carregamento das Tarefas", "ERRO");
+        console.log(e)
+      },
+      complete: () => this.toast.success("Carregamento de tarefas concluído", "Concluído")
+    })
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+  
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Mês começa em 0
+    const year = date.getFullYear();
+  
+    return `${hours}:${minutes} ${day}/${month}/${year}`;
+  }
+
+  @ViewChild('table', { static: true })
+  table!: MatTable<Task>;
+
+  ELEMENT_DATA: Task[] = [];
+
+  displayedColumns: string[] = ['name', 'cost', 'limitDate'];
+  dataSource = this.ELEMENT_DATA;
 
   drop(event: CdkDragDrop<string>) {
     const previousIndex = this.dataSource.findIndex(d => d === event.item.data);
 
-    
+
     moveItemInArray(this.dataSource, previousIndex, event.currentIndex);
 
     this.table.renderRows();
