@@ -29,7 +29,7 @@ public class Task implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date limitDate;
 
-    @Column(name = "presentation_order", nullable = false, unique = true)
+    @Column(name = "presentation_order", nullable = false)
     private Long presentationOrder;
 
     public Task() {

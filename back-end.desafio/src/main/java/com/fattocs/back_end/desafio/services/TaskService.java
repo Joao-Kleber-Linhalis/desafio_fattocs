@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.Comparator;
 
 @Service
 public class TaskService {
@@ -27,9 +29,17 @@ public class TaskService {
 
     public List<TaskVO> findAll() {
 
-        logger.info("Finding all task");
+        logger.info("Finding all tasks");
+
+        // Converte a lista de entidades para TaskVO
         var tasks = DozerMapper.parseListObjects(repository.findAll(), TaskVO.class);
+
+        // Ordena a lista pelo campo presentationOrder
+        tasks.sort(Comparator.comparing(TaskVO::getPresentationOrder));
+
+        // Adiciona os links
         tasks.forEach(p -> p.add(linkTo(methodOn(TaskController.class).findById(p.getKey())).withSelfRel()));
+
         return tasks;
     }
 
@@ -68,7 +78,7 @@ public class TaskService {
         task.setName(newTaskVO.getName());
         task.setCost(newTaskVO.getCost());
         task.setLimitDate(newTaskVO.getLimitDate());
-        task.setPresentationOrder(newTaskVO.getPresentationOrder());
+        //Presentation order só é trocada no metodo especifico.
         var taskVO = DozerMapper.parseObject(repository.save(task),TaskVO.class);
         taskVO.add(linkTo(methodOn(TaskController.class).findById(taskVO.getKey())).withSelfRel());
         return taskVO;
@@ -89,7 +99,40 @@ public class TaskService {
         repository.delete(task);
 
         // Atualiza a ordem de apresentação dos registros restantes
-        repository.updatePresentationOrderAfterDeletion(deletedOrder);
+        repository.updatePresentationOrder(deletedOrder);
+    }
+
+    @Transactional
+    public TaskVO updatePresentationOrder(Long id, Long newOrder) {
+
+        logger.info("Updating the presentation order of task with id = " + id + " to order: " + newOrder) ;
+
+        // Busca a tarefa pelo ID
+        var task = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + id));
+
+        Long currentOrder = task.getPresentationOrder();
+
+        // Verifica se a nova ordem é igual à ordem atual
+        if (Objects.equals(currentOrder, newOrder)) {
+            return DozerMapper.parseObject(task, TaskVO.class);
+        }
+
+        // Ajusta as ordens das outras tarefas
+        if (currentOrder < newOrder) {
+            repository.decrementOrderInRange(newOrder, currentOrder); // A ordem atual está antes da nova ordem
+        } else {
+            repository.incrementOrderInRange(newOrder, currentOrder); // A ordem atual está depois da nova ordem
+        }
+
+        // Atualiza a tarefa com a nova ordem desejada
+        task.setPresentationOrder(newOrder);
+        var updatedTask = repository.save(task);
+
+        // Converte e adiciona o link
+        var taskVO = DozerMapper.parseObject(updatedTask, TaskVO.class);
+        taskVO.add(linkTo(methodOn(TaskController.class).findById(id)).withSelfRel());
+        return taskVO;
     }
 
 
