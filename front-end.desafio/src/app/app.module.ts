@@ -11,7 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TaskListComponent } from './components/task/task-list/task-list.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { provideToastr, ToastrModule, ToastrService } from 'ngx-toastr';
+import { provideToastr, ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -22,9 +22,9 @@ import { provideToastr, ToastrModule, ToastrService } from 'ngx-toastr';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     DragDropModule,
     MatButtonModule,
-    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     MatTableModule,

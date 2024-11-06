@@ -27,3 +27,99 @@ table {
   .cdk-drop-list-dragging .mat-row:not(.cdk-drag-placeholder) {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   }
+
+  .container {
+    width: 90%;
+    margin: auto;
+}
+
+table {
+    width: 100%;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+button {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.radio-button-container {
+    display: flex;
+    align-items: center;
+    /* Centraliza verticalmente */
+    justify-content: space-around;
+    margin-bottom: 20px;
+    /* Adicione uma borda sólida em destaque */
+    padding: 10px;
+}
+
+.radio-label {
+    font-size: 16px;
+    /* Tamanho da fonte do texto */
+    font-weight: bold;
+    /* Negrito para enfatizar */
+    margin-right: 10px;
+    /* Espaçamento entre o texto e os radio buttons */
+}
+
+.radio-button-label {
+    display: flex;
+    align-items: center;
+    /* Centraliza verticalmente */
+    margin-right: 20px;
+    /* Espaçamento entre os radio buttons */
+}
+
+/* Estilo para os radio buttons selecionados */
+.radio-button-label input:checked+span::before {
+    content: "\2022";
+    /* Use um marcador redondo para indicar seleção */
+    color: #007bff;
+    /* Cor do marcador quando selecionado */
+    font-size: 18px;
+    margin-right: 6px;
+    /* Adicione espaço entre o marcador e o texto */
+}
+
+/* Estilo para os radio buttons não selecionados */
+.radio-button-label input+span::before {
+    content: "";
+    font-size: 18px;
+    margin-right: 6px;
+}
+
+/* Estilize a label para melhorar a interação do usuário */
+.radio-button-label span {
+    cursor: pointer;
+}
+
+/* Estilo para quando o cursor está sobre a label */
+.radio-button-label:hover {
+    color: #007bff;
+    /* Mude a cor do texto ao passar o cursor sobre ele */
+}
+
+.center-text {
+    text-align: center;
+}
+
+.edit {
+    color: rgb(6, 142, 253);
+}
+
+.delete {
+    color: red;
+}
+
+.done{
+    color: green;
+}

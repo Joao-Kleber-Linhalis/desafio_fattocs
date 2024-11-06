@@ -1,24 +1,28 @@
-<mat-table #table [dataSource]="dataSource" class="mat-elevation-z8" cdkDropList (cdkDropListDropped)="drop($event)"
-    cdkDropListData="dataSource">
+<div class="container">
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-    </ng-container>
+    <h1>Listando Tarefas</h1>
+    <button routerLink="create" class="mat-elevation-z8" mat-stroked-button color="primary">Novo Tarefas</button>
 
-    <!-- Cost Column -->
-    <ng-container matColumnDef="cost">
-        <mat-header-cell *matHeaderCellDef> Custo </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.cost}} </mat-cell>
-    </ng-container>
 
-    <!-- LimitDate Column -->
-    <ng-container matColumnDef="limitDate">
-        <mat-header-cell *matHeaderCellDef> Data Limite </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{formatDate(element.limitDate)}} </mat-cell>
-    </ng-container>
+    <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8" cdkDropList (cdkDropListDropped)="drop($event)"
+        cdkDropListData="dataSource">
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag [cdkDragData]="row"></mat-row>
-</mat-table>
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="cost">
+            <mat-header-cell *matHeaderCellDef> Custo </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.cost}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="limitDate">
+            <mat-header-cell *matHeaderCellDef> Data Limite </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{formatDate(element.limitDate)}} </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag [cdkDragData]="row"></mat-row>
+    </mat-table>
+</div>
