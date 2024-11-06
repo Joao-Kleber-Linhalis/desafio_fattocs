@@ -1,7 +1,7 @@
 <div class="container">
 
     <h1>Listando Tarefas</h1>
-    <button routerLink="create" class="mat-elevation-z8" mat-stroked-button color="primary">Novo Tarefas</button>
+    <button routerLink="create" class="mat-elevation-z8" mat-stroked-button color="primary">Nova Tarefaa</button>
 
 
     <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8" cdkDropList (cdkDropListDropped)="drop($event)"
@@ -23,6 +23,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag [cdkDragData]="row"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag [cdkDragData]="row"
+            [ngClass]="{ 'highlight': row.cost >=1000 }"></mat-row>
     </mat-table>
 </div>
