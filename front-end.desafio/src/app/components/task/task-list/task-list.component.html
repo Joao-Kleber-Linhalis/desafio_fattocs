@@ -1,11 +1,10 @@
 <div class="container">
+    <h1 class="title">To do List</h1>
+    <button (click)="openFormDialog()" class="button mat-elevation-z8" mat-stroked-button color="primary">Nova
+        Tarefa</button>
 
-    <h1>Listando Tarefas</h1>
-    <button (click)="openCreateDialog()" class="mat-elevation-z8" mat-stroked-button color="primary">Nova Tarefaa</button>
-
-
-    <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8" cdkDropList (cdkDropListDropped)="drop($event)"
-        cdkDropListData="dataSource">
+    <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8" cdkDropList
+        (cdkDropListDropped)="drop($event)">
 
         <ng-container matColumnDef="name">
             <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
@@ -20,6 +19,18 @@
         <ng-container matColumnDef="limitDate">
             <mat-header-cell *matHeaderCellDef> Data Limite </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{formatDate(element.limitDate)}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Ações </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-icon-button color="primary" (click)="openFormDialog(element)">
+                    <i class="material-icons edit">edit</i>
+                </button>
+                <button mat-icon-button color="warn">
+                    <i class="material-icons delete">delete</i>
+                </button>
+            </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -24,7 +24,7 @@ export class TaskListComponent implements OnInit {
   table!: MatTable<Task>;
 
   ELEMENT_DATA: Task[] = [];
-  displayedColumns: string[] = ['name', 'cost', 'limitDate'];
+  displayedColumns: string[] = ['name', 'cost', 'limitDate', 'actions'];
   dataSource = new MatTableDataSource<Task>(this.ELEMENT_DATA);
 
   ngOnInit(): void {
@@ -61,14 +61,14 @@ export class TaskListComponent implements OnInit {
     });
   }
 
-  openCreateDialog(task?: Task) {
+  openFormDialog(task?: Task) {
     const dialogConfig = new MatDialogConfig;
     dialogConfig.autoFocus = true;
     dialogConfig.width = "25%";
     dialogConfig.height = '400px';
     dialogConfig.data = {
       title: task != null ? "Edição" : "Cadastro",
-      task: task?._links.self.helf
+      task: task?.id
     }
     var _popup = this.dialogRef.open(TaskFormPopupComponent, dialogConfig);
     _popup.afterClosed().subscribe(close => {

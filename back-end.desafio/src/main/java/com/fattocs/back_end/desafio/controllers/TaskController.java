@@ -121,7 +121,7 @@ public class TaskController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public TaskVO disablePerson(@PathVariable(value = "id") Long id, @PathVariable(value = "order") Long order) {
+    public TaskVO updatePresentationOrder(@PathVariable(value = "id") Long id, @PathVariable(value = "order") Long order) {
         return service.updatePresentationOrder(id,order);
     }
 }

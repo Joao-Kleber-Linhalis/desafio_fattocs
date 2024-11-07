@@ -24,18 +24,14 @@ export class TaskService {
   }
 
   update(task: Task): Observable<Task> {
-    return this.http.put<Task>(`${API_CONFIG.baseUrl}/task/v1/${task.id}`, task);
+    return this.http.put<Task>(`${API_CONFIG.baseUrl}/task/v1`, task);
   }
 
-  delete(id: any): Observable<Task> {
-    return this.http.delete<Task>(`${API_CONFIG.baseUrl}/task/v1/${id}`)
+  delete(id: any): Observable<void> {
+    return this.http.delete<void>(`${API_CONFIG.baseUrl}/task/v1/${id}`)
   }
 
   updatePresentationOrder(id: any, newOrder: number): Observable<Task> {
     return this.http.patch<Task>(`${API_CONFIG.baseUrl}/task/v1/${id}/${newOrder}`, null);
-  }
-
-  launcheGetUrl(url: string): Observable<Task> {
-    return this.http.get<Task>(url)
   }
 }

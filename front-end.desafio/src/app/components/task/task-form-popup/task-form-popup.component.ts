@@ -39,15 +39,31 @@ export class TaskFormPopupComponent implements OnInit {
 
   ngOnInit(): void {
     this.inputData = this.data
+    console.log(this.inputData)
     if (this.inputData.task != null) {
-      this.service.launcheGetUrl(this.inputData.task).subscribe({
-        next: (response) => this.task = response,
-        error: () => {
-          this.closeDialog("Erro")
-        }
-      });
+      this.findById(this.inputData.task)
       this.isCreate = false;
     }
+  }
+
+  findById(id: any) {
+    this.service.findById(this.inputData.task).subscribe({
+      next: (response) => {
+        this.task = response
+        const limitDateString = this.task.limitDate; // Supondo que limitDate venha da resposta
+
+        // Converta limitDate para Moment
+        const limitDateMoment = moment(limitDateString);
+        console.log(limitDateMoment.toISOString())
+
+        // Defina o valor do FormControl
+        this.limitDate.setValue(limitDateMoment);
+        console.log(this.limitDate.value)
+      },
+      error: () => {
+        this.closeDialog("Erro")
+      }
+    });
   }
 
 
@@ -65,18 +81,21 @@ export class TaskFormPopupComponent implements OnInit {
     this.dialogRef.close({ title: this.inputData.title, type: type });
   }
 
-  create() {
+  save() {
     if (this.validarCampos()) {
-      this.service.create(this.task).subscribe({
+      const request = this.isCreate ? this.service.create(this.task) : this.service.update(this.task);
+
+      request.subscribe({
         complete: () => {
-          this.closeDialog("Sucesso")
+          this.closeDialog("Sucesso");
         },
         error: (e) => {
-          this.toast.error(e, "Erro na")
+          const action = this.isCreate ? "criação" : "atualização";
+          this.toast.error(e, `Erro na ${action}`);
         }
       });
     } else {
-      this.toast.info("Campos necessários em branco", "Info")
+      this.toast.info("Campos necessários em branco", "Info");
     }
   }
 

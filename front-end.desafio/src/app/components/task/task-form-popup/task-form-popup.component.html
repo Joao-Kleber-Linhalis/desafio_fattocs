@@ -26,7 +26,7 @@
 
 <div mat-dialog-actions class="actions">
     <button (click)="closeDialog()" mat-raised-button color="warn">Cancelar</button>
-    <button [disabled]="!validarCampos()" (click)="create()" mat-raised-button
+    <button [disabled]="!validarCampos()" (click)="save()" mat-raised-button
         [ngClass]="{ 'success': validarCampos()}">{{isCreate ? "Cadastrar"
         : "Atualizar"}}</button>
 </div>
