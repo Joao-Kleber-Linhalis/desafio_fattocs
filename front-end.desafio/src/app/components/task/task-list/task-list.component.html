@@ -1,7 +1,7 @@
 <div class="container">
 
     <h1>Listando Tarefas</h1>
-    <button routerLink="create" class="mat-elevation-z8" mat-stroked-button color="primary">Nova Tarefaa</button>
+    <button (click)="openCreateDialog()" class="mat-elevation-z8" mat-stroked-button color="primary">Nova Tarefaa</button>
 
 
     <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8" cdkDropList (cdkDropListDropped)="drop($event)"

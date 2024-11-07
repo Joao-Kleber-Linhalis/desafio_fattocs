@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>{{inputData.title + " de Tarefa"}}</h1>
+
+<div mat-dialog-content>
+    <form class="form">
+        <mat-form-field class="fullWidth" appearance="outline">
+            <mat-label>Nome</mat-label>
+            <input matInput [(ngModel)]="task.name" name="name" [formControl]="name" required matInput
+                placeholder="Ex... Café" maxlength="50">
+        </mat-form-field>
+
+        <mat-form-field class="fullWidth" appearance="outline">
+            <mat-label>Custo</mat-label>
+            <input currencyMask matInput [(ngModel)]="task.cost" [formControl]="cost" name="cost"
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" placeholder="Ex... R$50" required />
+        </mat-form-field>
+        <!-- <mat-form-field class="fullWidth" appearance="outline">
+            <mat-label>Data da Locação</mat-label>
+            <input matInput [matDatepicker]="picker1" (dateInput)="onDateSelected($event)" [formControl]="limitDate">
+            <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field> -->
+    </form>
+</div>
+
+<div mat-dialog-actions>
+    <button (click)="closeDialog()" mat-raised-button color="warn">Cancelar</button>
+
+</div>

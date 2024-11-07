@@ -10,25 +10,50 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TaskListComponent } from './components/task/task-list/task-list.component';
 import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
 import { provideToastr, ToastrModule } from 'ngx-toastr';
+import { TaskFormPopupComponent } from './components/task/task-form-popup/task-form-popup.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { CurrencyMaskModule } from "ng2-currency-mask";
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+//import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import * as moment from 'moment';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TaskListComponent
+    TaskListComponent,
+    TaskFormPopupComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+
+    //Http
     HttpClientModule,
-    DragDropModule,
-    MatButtonModule,
+
+    //Forms
     FormsModule,
     ReactiveFormsModule,
+    MatFormFieldModule,
+
+    //Material
+    DragDropModule,
+    MatButtonModule,
     MatTableModule,
-    MatIconModule,
+    MatDialogModule,
+    MatInputModule,
+
+    //MatPicker
+    MatDatepickerModule, 
+    //MatMomentDateModule,
+
+    //Mask
+    CurrencyMaskModule,
+    //Toast
     ToastrModule.forRoot({
       timeOut: 4000,
       closeButton: true,
@@ -39,6 +64,6 @@ import { provideToastr, ToastrModule } from 'ngx-toastr';
   providers: [
     provideToastr(),
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

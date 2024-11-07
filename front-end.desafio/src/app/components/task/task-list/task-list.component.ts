@@ -4,6 +4,8 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Task } from 'src/app/models/task';
 import { ToastrService } from 'ngx-toastr';
 import { TaskService } from 'src/app/services/task.service';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { TaskFormPopupComponent } from '../task-form-popup/task-form-popup.component';
 
 @Component({
   selector: 'app-task-list',
@@ -15,6 +17,7 @@ export class TaskListComponent implements OnInit {
   constructor(
     private service: TaskService,
     private toast: ToastrService,
+    private dialogRef: MatDialog,
   ) { }
 
   @ViewChild('table', { static: true })
@@ -22,7 +25,7 @@ export class TaskListComponent implements OnInit {
 
   ELEMENT_DATA: Task[] = [];
   displayedColumns: string[] = ['name', 'cost', 'limitDate'];
-  dataSource = new MatTableDataSource<Task>(this.ELEMENT_DATA);  // Agora é uma instância de MatTableDataSource
+  dataSource = new MatTableDataSource<Task>(this.ELEMENT_DATA);
 
   ngOnInit(): void {
     this.findAll();
@@ -32,7 +35,7 @@ export class TaskListComponent implements OnInit {
     this.service.findAll().subscribe({
       next: (response) => {
         this.ELEMENT_DATA = response;
-        this.dataSource.data = this.ELEMENT_DATA;  // Atualiza dataSource.data
+        this.dataSource.data = this.ELEMENT_DATA;
       },
       error: (e) => {
         this.toast.error("Erro no Carregamento das Tarefas", "ERRO");
@@ -40,16 +43,6 @@ export class TaskListComponent implements OnInit {
       },
       complete: () => this.toast.success("Carregamento de tarefas concluído", "Concluído")
     });
-  }
-
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Mês começa em 0
-    const year = date.getFullYear();
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
 
   updatePresentationOrder(id: any, newOrder: number): Promise<void> {
@@ -68,9 +61,29 @@ export class TaskListComponent implements OnInit {
     });
   }
 
+  openCreateDialog(task?: Task) {
+    const dialogConfig = new MatDialogConfig;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "60%";
+    dialogConfig.height = '400px';
+    dialogConfig.data = {
+      title: task != null ? "Edição" : "Cadastro",
+      task: task
+    }
+    var _popup = this.dialogRef.open(TaskFormPopupComponent, dialogConfig);
+    _popup.afterClosed().subscribe(close => {
+      if (close.type === "Cancel") {
+        this.toast.info(`${close.title} de tarefa cancelada`, close.title)
+      }
+      else {
+        this.toast.success(`${close.title} de tarefa concluída`, close.title)
+      }
+    })
+  }
+
   async drop(event: CdkDragDrop<string>) {
     const previousIndex = this.dataSource.data.findIndex(d => d === event.item.data);
-    const taskIndex = this.dataSource.data[previousIndex]?.id;  // Agora dataSource.data é acessível
+    const taskIndex = this.dataSource.data[previousIndex]?.id;
     console.log(taskIndex);
 
     try {
@@ -81,5 +94,15 @@ export class TaskListComponent implements OnInit {
     } catch (error) {
       console.log("Não foi possível atualizar a prioridade:", error);
     }
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Mês começa em 0
+    const year = date.getFullYear();
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
 }
