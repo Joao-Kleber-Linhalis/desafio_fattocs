@@ -64,20 +64,28 @@ export class TaskListComponent implements OnInit {
   openCreateDialog(task?: Task) {
     const dialogConfig = new MatDialogConfig;
     dialogConfig.autoFocus = true;
-    dialogConfig.width = "60%";
+    dialogConfig.width = "25%";
     dialogConfig.height = '400px';
     dialogConfig.data = {
       title: task != null ? "Edição" : "Cadastro",
-      task: task
+      task: task?._links.self.helf
     }
     var _popup = this.dialogRef.open(TaskFormPopupComponent, dialogConfig);
     _popup.afterClosed().subscribe(close => {
-      if (close.type === "Cancel") {
+      if (!close?.type) {
+        this.toast.info("Formulário fechado pelo usuário", "Formulário")
+      }
+      else if (close.type === null || close.type === "Cancel") {
         this.toast.info(`${close.title} de tarefa cancelada`, close.title)
+      }
+      else if (close.type === "Error") {
+        this.toast.error(`Erro na ${close.title}`, "Erro")
+
       }
       else {
         this.toast.success(`${close.title} de tarefa concluída`, close.title)
       }
+      this.findAll()
     })
   }
 
@@ -98,11 +106,9 @@ export class TaskListComponent implements OnInit {
 
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Mês começa em 0
     const year = date.getFullYear();
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
+    return `${day}/${month}/${year}`;
   }
 }

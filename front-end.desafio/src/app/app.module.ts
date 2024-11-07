@@ -18,6 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+
 //import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import * as moment from 'moment';
 
@@ -48,7 +49,8 @@ import * as moment from 'moment';
     MatInputModule,
 
     //MatPicker
-    MatDatepickerModule, 
+    MatDatepickerModule,
+    MatNativeDateModule,
     //MatMomentDateModule,
 
     //Mask
@@ -63,7 +65,10 @@ import * as moment from 'moment';
   ],
   providers: [
     provideToastr(),
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
   ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
+
+moment.locale('pt-BR');

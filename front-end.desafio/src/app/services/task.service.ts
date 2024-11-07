@@ -34,4 +34,8 @@ export class TaskService {
   updatePresentationOrder(id: any, newOrder: number): Observable<Task> {
     return this.http.patch<Task>(`${API_CONFIG.baseUrl}/task/v1/${id}/${newOrder}`, null);
   }
+
+  launcheGetUrl(url: string): Observable<Task> {
+    return this.http.get<Task>(url)
+  }
 }

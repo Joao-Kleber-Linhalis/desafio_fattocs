@@ -11,18 +11,22 @@
         <mat-form-field class="fullWidth" appearance="outline">
             <mat-label>Custo</mat-label>
             <input currencyMask matInput [(ngModel)]="task.cost" [formControl]="cost" name="cost"
-                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" placeholder="Ex... R$50" required />
+                [options]="{align:'left', prefix: 'R$ ', thousands: '.', decimal: ',' }" placeholder="Ex... R$50"
+                required />
         </mat-form-field>
-        <!-- <mat-form-field class="fullWidth" appearance="outline">
-            <mat-label>Data da Locação</mat-label>
-            <input matInput [matDatepicker]="picker1" (dateInput)="onDateSelected($event)" [formControl]="limitDate">
+        <mat-form-field class="fullWidth" appearance="outline">
+            <mat-label>Data Limite</mat-label>
+            <input matInput [matDatepicker]="picker1" (dateInput)="onDateSelected($event)" [formControl]="limitDate"
+                [min]="minDate">
             <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
-        </mat-form-field> -->
+        </mat-form-field>
     </form>
 </div>
 
-<div mat-dialog-actions>
+<div mat-dialog-actions class="actions">
     <button (click)="closeDialog()" mat-raised-button color="warn">Cancelar</button>
-
+    <button [disabled]="!validarCampos()" (click)="create()" mat-raised-button
+        [ngClass]="{ 'success': validarCampos()}">{{isCreate ? "Cadastrar"
+        : "Atualizar"}}</button>
 </div>

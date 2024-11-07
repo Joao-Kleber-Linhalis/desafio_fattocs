@@ -1,7 +1,18 @@
-.fullWidth{
+.fullWidth {
     width: 100%;
 }
 
-.form{
+.form {
     margin-top: 1rem;
+}
+
+.success {
+    background-color: green;
+    color: white;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

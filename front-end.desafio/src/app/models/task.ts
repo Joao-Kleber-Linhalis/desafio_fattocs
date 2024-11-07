@@ -4,4 +4,5 @@ export interface Task{
     cost: number;
     presentationOrder?: number;
     limitDate: string;
+    _links?: any;
 }
