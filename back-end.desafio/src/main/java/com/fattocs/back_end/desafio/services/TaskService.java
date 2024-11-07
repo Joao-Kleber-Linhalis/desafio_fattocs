@@ -8,9 +8,11 @@ import com.fattocs.back_end.desafio.data.vo.v1.TaskVO;
 import com.fattocs.back_end.desafio.domain.Task;
 import com.fattocs.back_end.desafio.exceptions.RequiredObjectIsNullException;
 import com.fattocs.back_end.desafio.exceptions.ResourceNotFoundException;
+import com.fattocs.back_end.desafio.exceptions.UniqueConstraintViolationException;
 import com.fattocs.back_end.desafio.mapper.DozerMapper;
 import com.fattocs.back_end.desafio.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class TaskService {
@@ -31,13 +35,11 @@ public class TaskService {
 
         logger.info("Finding all tasks");
 
-        // Converte a lista de entidades para TaskVO
         var tasks = DozerMapper.parseListObjects(repository.findAll(), TaskVO.class);
 
         // Ordena a lista pelo campo presentationOrder
         tasks.sort(Comparator.comparing(TaskVO::getPresentationOrder));
 
-        // Adiciona os links
         tasks.forEach(p -> p.add(linkTo(methodOn(TaskController.class).findById(p.getKey())).withSelfRel()));
 
         return tasks;
@@ -58,13 +60,18 @@ public class TaskService {
         if (taskVO == null) throw new RequiredObjectIsNullException();
 
         logger.info("Creating one task");
-        var task = DozerMapper.parseObject(taskVO, Task.class);
-        Long maxOrder = repository.findMaxPresentationOrder();
-        task.setId(null);
-        task.setPresentationOrder(maxOrder + 1);
-        var newTaskVO = DozerMapper.parseObject(repository.save(task), TaskVO.class);
-        newTaskVO.add(linkTo(methodOn(TaskController.class).findById(newTaskVO.getKey())).withSelfRel());
-        return newTaskVO;
+        try {
+            var task = DozerMapper.parseObject(taskVO, Task.class);
+            Long maxOrder = repository.findMaxPresentationOrder();
+            task.setId(null);
+            task.setPresentationOrder(maxOrder + 1);
+            var newTaskVO = DozerMapper.parseObject(repository.save(task), TaskVO.class);
+            newTaskVO.add(linkTo(methodOn(TaskController.class).findById(newTaskVO.getKey())).withSelfRel());
+            return newTaskVO;
+
+        } catch (DataIntegrityViolationException e) {
+            throw new UniqueConstraintViolationException(extractFieldAndValueFromMessage(e.getMessage()));
+        }
     }
 
     public TaskVO update(TaskVO newTaskVO) {
@@ -72,16 +79,21 @@ public class TaskService {
         if (newTaskVO == null) throw new RequiredObjectIsNullException();
 
         logger.info("Updating one task");
-        var task = repository.findById(newTaskVO.getKey()).orElseThrow(() ->
-                new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + newTaskVO.getKey()));
 
-        task.setName(newTaskVO.getName());
-        task.setCost(newTaskVO.getCost());
-        task.setLimitDate(newTaskVO.getLimitDate());
-        //Presentation order só é trocada no metodo especifico.
-        var taskVO = DozerMapper.parseObject(repository.save(task),TaskVO.class);
-        taskVO.add(linkTo(methodOn(TaskController.class).findById(taskVO.getKey())).withSelfRel());
-        return taskVO;
+        try {
+
+            var task = repository.findById(newTaskVO.getKey()).orElseThrow(() -> new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + newTaskVO.getKey()));
+
+            task.setName(newTaskVO.getName());
+            task.setCost(newTaskVO.getCost());
+            task.setLimitDate(newTaskVO.getLimitDate());
+            //Presentation order só é trocada no metodo especifico.
+            var taskVO = DozerMapper.parseObject(repository.save(task), TaskVO.class);
+            taskVO.add(linkTo(methodOn(TaskController.class).findById(taskVO.getKey())).withSelfRel());
+            return taskVO;
+        } catch (DataIntegrityViolationException e) {
+            throw new UniqueConstraintViolationException(extractFieldAndValueFromMessage(e.getMessage()));
+        }
     }
 
     @Transactional
@@ -89,8 +101,7 @@ public class TaskService {
         logger.info("Deleting task with id = " + id);
 
         // Verifica se a tarefa existe
-        var task = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + id));
+        var task = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + id));
 
         // Salva a ordem de apresentação da tarefa a ser excluida
         Long deletedOrder = task.getPresentationOrder();
@@ -105,11 +116,10 @@ public class TaskService {
     @Transactional
     public TaskVO updatePresentationOrder(Long id, Long newOrder) {
 
-        logger.info("Updating the presentation order of task with id = " + id + " to order: " + newOrder) ;
+        logger.info("Updating the presentation order of task with id = " + id + " to order: " + newOrder);
 
-        // Busca a tarefa pelo ID
-        var task = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + id));
+
+        var task = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma task encontrada para o ID: " + id));
 
         Long currentOrder = task.getPresentationOrder();
 
@@ -129,10 +139,25 @@ public class TaskService {
         task.setPresentationOrder(newOrder);
         var updatedTask = repository.save(task);
 
-        // Converte e adiciona o link
         var taskVO = DozerMapper.parseObject(updatedTask, TaskVO.class);
         taskVO.add(linkTo(methodOn(TaskController.class).findById(id)).withSelfRel());
         return taskVO;
+
+    }
+
+    private String extractFieldAndValueFromMessage(String message) {
+        // Expressão regex para extrair o campo e o valor
+        Pattern pattern = Pattern.compile("Key \\((.*?)\\)=\\((.*?)\\) already exists");
+        Matcher matcher = pattern.matcher(message);
+        if (matcher.find()) {
+            String field = matcher.group(1);
+            if (Objects.equals(field, "name")) {
+                field = "Nome";
+            }
+            String value = matcher.group(2);
+            return "O campo '" + field + "' com o valor '" + value + "' já existe.";
+        }
+        return "Esse recurso já existe.";
     }
 
 

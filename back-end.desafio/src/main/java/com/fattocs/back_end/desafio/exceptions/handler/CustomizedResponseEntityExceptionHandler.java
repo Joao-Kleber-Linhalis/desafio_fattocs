@@ -4,6 +4,7 @@ package com.fattocs.back_end.desafio.exceptions.handler;
 import com.fattocs.back_end.desafio.exceptions.ExceptionResponse;
 import com.fattocs.back_end.desafio.exceptions.RequiredObjectIsNullException;
 import com.fattocs.back_end.desafio.exceptions.ResourceNotFoundException;
+import com.fattocs.back_end.desafio.exceptions.UniqueConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -52,5 +53,15 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
                 request.getDescription(false));
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UniqueConstraintViolationException.class)
+    public ResponseEntity<ExceptionResponse> handleUniqueConstraintViolationException(UniqueConstraintViolationException ex, WebRequest request) {
+
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 }
