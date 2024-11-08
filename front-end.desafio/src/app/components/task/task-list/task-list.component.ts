@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TaskService } from 'src/app/services/task.service';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { TaskFormPopupComponent } from '../task-form-popup/task-form-popup.component';
+import { API_CONFIG } from 'src/app/config/api.config';
 
 @Component({
   selector: 'app-task-list',
@@ -120,6 +121,10 @@ export class TaskListComponent implements OnInit {
     } catch (error) {
       console.log("Não foi possível atualizar a prioridade:", error);
     }
+  }
+
+  getSwaggerUrl(): string {
+    return API_CONFIG.baseUrl.replace("api", '') + 'swagger-ui.html';
   }
 
   formatDate(dateString: string): string {
