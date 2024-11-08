@@ -7,8 +7,8 @@
 }
 
 .success {
-    background-color: green;
-    color: white;
+    background-color: green !important;
+    color: white !important;
 }
 
 .actions {

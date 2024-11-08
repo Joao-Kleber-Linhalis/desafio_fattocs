@@ -18,8 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
-
-//import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatIconModule } from '@angular/material/icon';
 import * as moment from 'moment';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
@@ -48,6 +47,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatTableModule,
     MatDialogModule,
     MatInputModule,
+    MatIconModule,
 
     //MatPicker
     MatDatepickerModule,

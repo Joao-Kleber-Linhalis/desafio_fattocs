@@ -31,7 +31,7 @@ export class TaskListComponent implements OnInit {
     this.findAll();
   }
 
-  findAll() {
+  findAll(needToast: boolean = true) {
     this.service.findAll().subscribe({
       next: (response) => {
         this.ELEMENT_DATA = response;
@@ -41,7 +41,9 @@ export class TaskListComponent implements OnInit {
         this.toast.error("Erro no Carregamento das Tarefas", "ERRO");
         console.log(e);
       },
-      complete: () => this.toast.success("Carregamento de tarefas concluído", "Concluído")
+      complete: () => {
+        if (needToast) { this.toast.success("Carregamento de tarefas concluído", "Concluído") }
+      }
     });
   }
 
@@ -60,6 +62,22 @@ export class TaskListComponent implements OnInit {
       });
     });
   }
+
+  delete(id: any, name: string) {
+    if (confirm("Deseja excluir a tarefa: " + name)) {
+      this.service.delete(id).subscribe({
+        complete: () => {
+          this.toast.success("Tarefa excluída com sucesso", "Exclusão");
+          this.findAll(false);
+        },
+        error: (e) => {
+          this.toast.error("Erro durante exclusão de tarefa", "ERRO");
+          console.log(e);
+        }
+      });
+    }
+  }
+
 
   openFormDialog(task?: Task) {
     const dialogConfig = new MatDialogConfig;
@@ -85,7 +103,7 @@ export class TaskListComponent implements OnInit {
       else {
         this.toast.success(`${close.title} de tarefa concluída`, close.title)
       }
-      this.findAll()
+      this.findAll(false)
     })
   }
 

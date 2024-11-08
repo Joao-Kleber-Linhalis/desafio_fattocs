@@ -1,40 +1,60 @@
-<div class="container">
-    <h1 class="title">To do List</h1>
-    <button (click)="openFormDialog()" class="button mat-elevation-z8" mat-stroked-button color="primary">Nova
-        Tarefa</button>
+<body>
+    <div class="container">
+        <h1 class="title">To do List</h1>
 
-    <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8" cdkDropList
-        (cdkDropListDropped)="drop($event)">
+        <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8" cdkDropList
+            (cdkDropListDropped)="drop($event)">
 
-        <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-        </ng-container>
+            <!-- Coluna de Nome -->
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef> Nome </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+            </ng-container>
 
-        <ng-container matColumnDef="cost">
-            <mat-header-cell *matHeaderCellDef> Custo </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.cost}} </mat-cell>
-        </ng-container>
+            <!-- Coluna de Custo -->
+            <ng-container matColumnDef="cost">
+                <mat-header-cell *matHeaderCellDef> Custo </mat-header-cell>
+                <mat-cell *matCellDef="let element"> R$ {{element.cost}} </mat-cell>
+            </ng-container>
 
-        <ng-container matColumnDef="limitDate">
-            <mat-header-cell *matHeaderCellDef> Data Limite </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{formatDate(element.limitDate)}} </mat-cell>
-        </ng-container>
+            <!-- Coluna de Data Limite -->
+            <ng-container matColumnDef="limitDate">
+                <mat-header-cell *matHeaderCellDef> Data Limite </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{formatDate(element.limitDate)}} </mat-cell>
+            </ng-container>
 
-        <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef> Ações </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <button mat-icon-button color="primary" (click)="openFormDialog(element)">
-                    <i class="material-icons edit">edit</i>
-                </button>
-                <button mat-icon-button color="warn">
-                    <i class="material-icons delete">delete</i>
-                </button>
-            </mat-cell>
-        </ng-container>
+            <!-- Coluna de Ações -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef> Ações </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-icon-button color="primary" (click)="openFormDialog(element)">
+                        <i class="material-icons edit">edit</i>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="delete(element.id,element.name)">
+                        <i class="material-icons delete">delete</i>
+                    </button>
+                </mat-cell>
+            </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag [cdkDragData]="row"
-            [ngClass]="{ 'highlight': row.cost >=1000 }"></mat-row>
-    </mat-table>
-</div>
+            <!-- Cabeçalho da Tabela -->
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+            <!-- Exibe linha com imagem e mensagem quando a tabela está vazia -->
+            <tr class="empty-state" *matNoDataRow>
+                <td colspan="4" class="no-data">
+                    <img src="assets/images/empty-list.png" alt="Lista Vazia" class="empty-image" />
+                    <p class="empty-message">Nenhuma tarefa encontrada. Adicione uma nova tarefa!</p>
+                </td>
+            </tr>
+
+            <!-- Linhas da Tabela -->
+            <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag [cdkDragData]="row"
+                [ngClass]="{ 'highlight': row.cost >= 1000 }"></mat-row>
+        </mat-table>
+
+        <!-- Botão Flutuante no Canto Inferior Direito -->
+        <button mat-fab color="primary" class="add-button" (click)="openFormDialog()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+</body>

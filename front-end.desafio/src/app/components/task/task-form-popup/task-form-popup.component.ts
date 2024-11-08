@@ -25,7 +25,7 @@ export class TaskFormPopupComponent implements OnInit {
   task: Task = {
     name: '',
     cost: null!,
-    limitDate: this.moment().format('DD/MM/YYYY'),
+    limitDate: this.moment().toISOString(),
   }
 
   cost: FormControl = new FormControl(null, [
@@ -44,19 +44,18 @@ export class TaskFormPopupComponent implements OnInit {
       this.findById(this.inputData.task)
       this.isCreate = false;
     }
+    console.log(this.task.limitDate)
   }
 
   findById(id: any) {
     this.service.findById(this.inputData.task).subscribe({
       next: (response) => {
         this.task = response
-        const limitDateString = this.task.limitDate; // Supondo que limitDate venha da resposta
+        const limitDateString = this.task.limitDate;
 
-        // Converta limitDate para Moment
         const limitDateMoment = moment(limitDateString);
         console.log(limitDateMoment.toISOString())
 
-        // Defina o valor do FormControl
         this.limitDate.setValue(limitDateMoment);
         console.log(this.limitDate.value)
       },
@@ -71,6 +70,7 @@ export class TaskFormPopupComponent implements OnInit {
   onDateSelected(event: any) {
     if (event.value) {
       this.task.limitDate = this.moment(event.value).toISOString();
+      console.log(this.task.limitDate)
     } else {
       this.task.limitDate = this.moment().format('DD/MM/YYYY');
     }

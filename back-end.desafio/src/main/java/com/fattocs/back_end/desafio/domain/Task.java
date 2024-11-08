@@ -26,7 +26,7 @@ public class Task implements Serializable {
 
     @Column(nullable = false)
     private Double cost;
-
+    
     @Column(name = "limit_date", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date limitDate;
