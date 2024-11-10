@@ -1,3 +1,3 @@
 export const API_CONFIG = {
-    baseUrl : "http://localhost:8080/api"
+    baseUrl : "https://desafio-fatto-backend-deploy.onrender.com/api"
 }
